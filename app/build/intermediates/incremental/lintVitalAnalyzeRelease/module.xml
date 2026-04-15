@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/home/ubuntu/velos_github_repo/app"
+    name=":app"
+    type="APP"
+    maven="Velos:app:unspecified"
+    agpVersion="8.7.3"
+    buildFolder="build"
+    bootClassPath="/home/ubuntu/android-sdk/platforms/android-35/android.jar:/home/ubuntu/android-sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-35"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

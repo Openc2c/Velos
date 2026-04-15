@@ -1,0 +1,66 @@
+name: Android Auto Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null || true
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      - name: Build release APK
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Generate release metadata
+        id: meta
+        run: |
+          VERSION_NAME=$(grep 'versionName =' app/build.gradle.kts | sed -E 's/.*"([^"]+)".*/\1/')
+          if [ -z "$VERSION_NAME" ]; then
+            VERSION_NAME="unknown"
+          fi
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "tag_name=auto-build-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "release_name=Velos Auto Build ${GITHUB_RUN_NUMBER} (v${VERSION_NAME})" >> "$GITHUB_OUTPUT"
+
+      - name: Publish APK to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag_name }}
+          name: ${{ steps.meta.outputs.release_name }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          prerelease: true
+          files: |
+            app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

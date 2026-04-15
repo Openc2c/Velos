@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.velos.net.app-mergeReleaseResources-51:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/home/ubuntu/velos_github_repo/app/src/main/res/values-night/themes.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "7",
+                        "endColumns": "12",
+                        "endOffsets": "435"
+                    }
+                }
+            ]
+        }
+    ]
+}
